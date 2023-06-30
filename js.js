@@ -10,13 +10,14 @@ class SimuladorCredito {
   }
 
   calcularInteres(monto, cuotas, tasa) {
-    let tasaDecimal = tasa / 100; // para convertir el porcentaje a decimal dividiendo por 100
-    let tasaMensual = tasaDecimal / 12; // Divido la tasa anual entre 12 para obtener la tasa mensual
+    let tasaDecimal = tasa / 100;
+    let tasaMensual = tasaDecimal / 12;
     let interes = monto * (tasaMensual * cuotas);
     return interes.toFixed(2);
   }
 
   iniciarSimulacion() {
+    const fechaActual = luxon.DateTime.local().toISODate();
     if (this.esSocio) {
       let realizarOtroCalculo;
 
@@ -24,11 +25,11 @@ class SimuladorCredito {
         let mensaje = this.mensajeBienvenida;
 
         mensaje += "Nombre: " + this.nombre + " " + this.apellido + "\n";
-        mensaje += "=================================================\n";
+        mensaje += "=====================================\n";
         mensaje +=
           "- El Crédito solicitado es solo para socios de la compañía\n";
         mensaje +=
-          "***********************************************************\n";
+          "**********************************************************\n";
 
         let monto = prompt("Ingrese el monto que desea solicitar");
         monto = parseFloat(monto).toFixed(2);
@@ -49,7 +50,8 @@ class SimuladorCredito {
         }
 
         let interes = this.calcularInteres(monto, cuotas, parseFloat(tasa));
-        let tasaDecimal = parseFloat(tasa) / 12; // convertir el porcentaje a decimal dividiendo por 100
+        let tasaDecimal = parseFloat(tasa) / 12;
+
         mensaje += "- Interés cobrado: $ " + interes + "\n";
 
         let total = parseFloat(monto) + parseFloat(interes);
@@ -59,6 +61,7 @@ class SimuladorCredito {
         alert(mensaje);
 
         this.resultados.push({
+          fecha: fechaActual,
           monto: monto,
           interes: interes,
           tasa: tasa,
@@ -84,24 +87,54 @@ class SimuladorCredito {
       this.apellido +
       ":\n";
     resultadoFinal += "=====================================\n";
+
+    const resultadosContainer = document.createElement("div");
+
     for (let i = 0; i < this.resultados.length; i++) {
-      resultadoFinal += "Crédito " + (i + 1) + "\n";
-      resultadoFinal +=
-        "Monto solicitado: $ " + this.resultados[i].monto + "\n";
-      resultadoFinal +=
-        "Interés cobrado: $ " + this.resultados[i].interes + "\n";
-      resultadoFinal +=
-        "Tasa Interés anual: " + this.resultados[i].tasa + "%\n";
-      resultadoFinal +=
-        "Tasa Interés mensual: " + this.resultados[i].tasaDecimal + "%\n";
-      resultadoFinal +=
+      const creditoDiv = document.createElement("div");
+      creditoDiv.classList.add("credito");
+
+      const fechaP = document.createElement("p");
+      fechaP.textContent = "Fecha: " + this.resultados[i].fecha;
+      creditoDiv.appendChild(fechaP);
+
+      const creditoHeading = document.createElement("h3");
+      creditoHeading.textContent = "Crédito " + (i + 1);
+      creditoDiv.appendChild(creditoHeading);
+
+      const montoP = document.createElement("p");
+      montoP.textContent = "Monto solicitado: $ " + this.resultados[i].monto;
+      creditoDiv.appendChild(montoP);
+
+      const interesP = document.createElement("p");
+      interesP.textContent = "Interés cobrado: $ " + this.resultados[i].interes;
+      creditoDiv.appendChild(interesP);
+
+      const tasaAnualP = document.createElement("p");
+      tasaAnualP.textContent =
+        "Tasa Interés anual: " + this.resultados[i].tasa + "%";
+      creditoDiv.appendChild(tasaAnualP);
+
+      const tasaMensualP = document.createElement("p");
+      tasaMensualP.textContent =
+        "Tasa Interés mensual: " + this.resultados[i].tasaDecimal + "%";
+      creditoDiv.appendChild(tasaMensualP);
+
+      const cuotaP = document.createElement("p");
+      cuotaP.textContent =
         "Cuota correspondiente: $ " +
-        (this.resultados[i].total / this.resultados[i].cuotas).toFixed(2) +
-        "\n";
-      resultadoFinal +=
-        "Monto Total del préstamo: $ " + this.resultados[i].total + "\n";
+        (this.resultados[i].total / this.resultados[i].cuotas).toFixed(2);
+      creditoDiv.appendChild(cuotaP);
+
+      const totalP = document.createElement("p");
+      totalP.textContent =
+        "Monto Total del préstamo: $ " + this.resultados[i].total;
+      creditoDiv.appendChild(totalP);
+
+      resultadosContainer.appendChild(creditoDiv);
     }
-    alert(resultadoFinal);
+
+    document.body.appendChild(resultadosContainer);
   }
 }
 
