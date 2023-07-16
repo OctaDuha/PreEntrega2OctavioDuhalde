@@ -38,9 +38,18 @@ class SimuladorCredito {
         monto = parseFloat(monto).toFixed(2);
         mensaje += "- Monto solicitado: " + monto + "\n";
 
-        let cuotas = prompt("En cuántas cuotas: 3, 6 o 12");
+        const cuotasData = fetch("/data.json").then((res) => res.json());
 
-        while (cuotas !== "3" && cuotas !== "6" && cuotas !== "12") {
+        let promptString = "En cuántas cuotas: ";
+        cuotasData.forEach((cuota) => {
+          promptString = promptString + " " + cuota.valor + ",";
+        });
+
+        let cuotas = prompt(promptString);
+
+        const cuotasValores = cuotasData.map((cuota) => cuota.valor);
+
+        while (!cuotasValores.includes(cuotas)) {
           cuotas = prompt("Ingrese un valor válido para las cuotas: 3, 6 o 12");
         }
 
