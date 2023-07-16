@@ -2,8 +2,11 @@ class SimuladorCredito {
   constructor() {
     this.resultados = [];
     this.mensajeBienvenida = "Bienvenidos a Securanza, Créditos a sola firma";
-    this.nombre = prompt("Ingrese su nombre");
-    this.apellido = prompt("Ingrese su apellido");
+
+    const usuario = obtenerUsuario();
+    this.nombre = usuario.nombre;
+    this.apellido = usuario.apellido;
+
     this.esSocio = confirm(
       "¿Eres socio? Presiona Aceptar para sí o Cancelar para no"
     );
@@ -138,6 +141,24 @@ class SimuladorCredito {
   }
 }
 
-// Crear una instancia de la clase y ejecutar la simulación
-const simulador = new SimuladorCredito();
-simulador.iniciarSimulacion();
+function obtenerUsuario() {
+  let usuario;
+  let usuarioEnLS = JSON.parse(localStorage.getItem("usuario"));
+
+  if (usuarioEnLS) {
+    usuario = usuarioEnLS;
+  } else {
+    const nombre = prompt("Ingrese su nombre");
+    const apellido = prompt("Ingrese su apellido");
+    usuario = { nombre, apellido };
+    localStorage.setItem("usuario", JSON.stringify(usuario));
+  }
+
+  return usuario;
+}
+
+function iniciar() {
+  // Crear una instancia de la clase y ejecutar la simulación
+  const simulador = new SimuladorCredito();
+  simulador.iniciarSimulacion();
+}
